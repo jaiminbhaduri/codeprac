@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body>
+    <h1>Welcome, {{.Username}}</h1>
+
+    <select id="language">
+        <option value="golang">Golang</option>
+        <option value="javascript">JavaScript</option>
+    </select>
+
+    <div style="display: flex;">
+        <textarea id="code-editor" style="width: 70%; height: 400px;"></textarea>
+        <div id="output" style="width: 30%; padding: 10px; border-left: 1px solid #ccc;">
+            <h3>Output</h3>
+            <pre id="result"></pre>
+        </div>
+    </div>
+
+    <button id="run-btn">Run</button>
+
+</body>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $('#run-btn').click(function () {
+        const code = $('#code-editor').val();
+        const language = $('#language').val();
+        $.ajax({
+            type: 'POST',
+            url: '/api/execute',
+            contentType: 'application/json',
+            data: JSON.stringify({ code, language }),
+            success: res => $('#result').text(res.output),
+            error: () => $('#result').text("Execution failed")
+        });
+    });
+</script>
+
+</html>
