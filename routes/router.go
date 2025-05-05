@@ -1,25 +1,22 @@
 package routes
 
 import (
-	"net/http"
-
-	"github.com/gorilla/mux"
+	"github.com/gin-gonic/gin"
 	"github.com/jaiminbhaduri/codeprac/controllers"
 )
 
-func SetupRoutes() http.Handler {
-	router := mux.NewRouter()
+func SetupRouter() *gin.Engine {
+	router := gin.Default()
+	router.LoadHTMLGlob("templates/*")
+	router.Static("/static", "./static")
 
-	// Static files
-	router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
+	// Views
+	router.GET("/", controllers.Dashboard)
 
-	// HTML views
-	router.HandleFunc("/", controllers.Dashboard).Methods("GET")
-
-	// API endpoints
-	router.HandleFunc("/api/register", controllers.Register).Methods("POST")
-	router.HandleFunc("/api/login", controllers.Login).Methods("POST")
-	router.HandleFunc("/api/execute", controllers.ExecuteCode).Methods("POST")
+	// API
+	router.POST("/api/register", controllers.Register)
+	router.POST("/api/login", controllers.Login)
+	router.POST("/api/execute", controllers.ExecuteCode)
 
 	return router
 }

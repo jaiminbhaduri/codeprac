@@ -5,32 +5,33 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/gin-gonic/gin"
 	"github.com/jaiminbhaduri/codeprac/utils"
 )
 
-func Dashboard(w http.ResponseWriter, r *http.Request) {
-	// Get JWT from cookie or Authorization header
-	tokenString := r.Header.Get("Authorization")
+func Dashboard(c *gin.Context) {
+	// Get JWT from Authorization header or cookie
+	tokenString := c.GetHeader("Authorization")
 	if tokenString == "" {
-		cookie, err := r.Cookie("token")
-		if err == nil {
-			tokenString = cookie.Value
+		if cookie, err := c.Cookie("token"); err == nil {
+			tokenString = cookie
 		}
 	}
-
 	tokenString = strings.TrimPrefix(tokenString, "Bearer ")
 
 	// Validate JWT
 	claims, err := utils.ValidateJWT(tokenString)
 	if err != nil {
 		tmpl := template.Must(template.ParseFiles("templates/auth.html"))
-		tmpl.Execute(w, nil)
+		c.Status(http.StatusUnauthorized)
+		tmpl.Execute(c.Writer, nil)
 		return
 	}
 
-	// If valid, show dashboard
+	// Render dashboard with username
 	tmpl := template.Must(template.ParseFiles("templates/dashboard.html"))
-	tmpl.Execute(w, map[string]interface{}{
-		"Username": claims.Username, // assuming username in JWT
+	c.Status(http.StatusOK)
+	tmpl.Execute(c.Writer, map[string]interface{}{
+		"Username": claims.Username,
 	})
 }

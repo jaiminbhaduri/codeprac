@@ -18,9 +18,9 @@
 
     <h2>Register</h2>
     <form id="register-form">
-        <input type="text" id="username" name="username" placeholder="Username" required /><br>
-        <input type="text" id="email" name="email" placeholder="Email" required /><br>
-        <input type="password" id="password" name="password" placeholder="Password" required /><br>
+        <input type="text" id="user" name="username" placeholder="Username" required /><br>
+        <input type="text" id="mail" name="email" placeholder="Email" required /><br>
+        <input type="password" id="passwd" name="password" placeholder="Password" required /><br>
         <button type="submit">Register</button>
     </form>
 
@@ -50,11 +50,11 @@
         e.preventDefault();
 
         const formData = {
-            username: $('#username').val(),
-            email: $('#email').val(),
-            password: $('#password').val()
+            username: $('#user').val(),
+            email: $('#mail').val(),
+            password: $('#passwd').val()
         };
-
+        console.log(formData)
         $.ajax({
             type: 'POST',
             url: '/api/register',
